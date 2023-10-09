@@ -1,58 +1,63 @@
-import { Component } from 'react';
-import { FeedbackOptions } from './FeedbackOptions/ButtonFB';
 import { Statistics } from './Statistics/StatisticsFB';
 import { Section } from './Section/SectionFB';
 import { Notification } from './Notification/Notification';
+import { Wrapper, Button } from './FeedbackOptions/ButtonFB.styled';
+import { useState } from 'react';
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-  leaveFeedback = event => {
-    this.setState({ [event]: this.state[event] + 1 });
-  };
-
-  countTotalFeedback = () => {
-    let { good, neutral, bad } = this.state;
+  const onLeaveFeedback = () => {
     return good + neutral + bad;
   };
-
-  countPositiveFeedbackPercentage = () => {
-    let countTotal = this.countTotalFeedback();
-    let goodFB = this.state.good;
-    return Math.round((goodFB / countTotal) * 100);
+  const countPositiveFeedbackPercentage = () => {
+    return Math.round((good / countTotal) * 100);
   };
+  const countTotal = onLeaveFeedback();
+  const countPositive = countPositiveFeedbackPercentage();
 
-  render() {
-    const options = Object.keys(this.state);
-    const countTotal = this.countTotalFeedback();
-    const countPositive = this.countPositiveFeedbackPercentage();
-
-    return (
-      <div>
-        <Section title="Please leave feedback">
-          <FeedbackOptions
-            options={options}
-            onLeaveFeedback={this.leaveFeedback}
+  return (
+    <div>
+      <Section title="Please leave feedback">
+        <Wrapper>
+          <Button
+            onClick={() => {
+              setGood(good + 1);
+            }}
+          >
+            Good
+          </Button>
+          <Button
+            onClick={() => {
+              setNeutral(neutral + 1);
+            }}
+          >
+            Neutral
+          </Button>
+          <Button
+            onClick={() => {
+              setBad(bad + 1);
+            }}
+          >
+            Bad
+          </Button>
+        </Wrapper>
+      </Section>
+      <Section title="Statistics">
+        {countTotal > 0 ? (
+          <Statistics
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={countTotal}
+            positivePercentage={countPositive}
           />
-        </Section>
-        <Section title="Statistics">
-          {countTotal > 0 ? (
-            <Statistics
-              good={this.state.good}
-              neutral={this.state.neutral}
-              bad={this.state.bad}
-              total={countTotal}
-              positivePercentage={countPositive}
-            />
-          ) : (
-            <Notification message="There is no feedback" />
-          )}
-        </Section>
-      </div>
-    );
-  }
-}
+        ) : (
+          <Notification message="There is no feedback" />
+        )}
+      </Section>
+    </div>
+  );
+};

@@ -11,7 +11,7 @@ export const Statistics = ({
   good,
   neutral,
   bad,
-  total = 0,
+  total,
   positivePercentage = 0,
 }) => {
   return (
